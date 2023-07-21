@@ -1,0 +1,81 @@
+﻿@page "/login"
+@layout LoginLayout
+@inject AccountService AccountService
+@inject StorageService StorageService
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthStateProvider
+
+<div class="form-center absolute-center">
+    <div class="card-body p-4 p-sm-5">
+        @if (!enterCode)
+        {
+            <EditForm Model="@_userEmail" OnValidSubmit="@HandleValidSubmit">
+                <DataAnnotationsValidator />
+                <div class="input-icon-dark-wrapper">
+                    <span class="icon-attachement"><i class="fa-solid fa-user"></i></span>
+                    <InputText type="email" @bind-Value="_userEmail.Email" class="login-input" placeholder="Email" />
+                </div>
+                <small><b><ValidationMessage class="text-center mt-2 text-danger" For="@(() =>_userEmail.Email)" /></b></small>
+                <button type="submit" class="btn btn-dark form-control mt-2">Send signin code</button>
+            </EditForm>
+        }
+        else
+        {
+            <EditForm Model="@_userEmailCode" OnValidSubmit="@HandleSignInSubmit">
+                <div class="input-icon-dark-wrapper">
+                    <span class="icon-attachement"><i class="fa-solid fa-user"></i></span>
+                    <InputText disabled type="text" @bind-Value="_userEmailCode.Email" class="login-input bg-dark" placeholder="Email" />
+                </div>
+                <div class="input-icon-dark-wrapper mt-3">
+                    <span class="icon-attachement"><i class="fa-solid fa-code"></i></span>
+                    <InputText type="text" @bind-Value="_userEmailCode.Code" class="login-input" placeholder="Code" />
+                </div>
+                <small><b><ValidationMessage class="text-center mt-2 text-danger" For="@(() =>_userEmailCode.Email)" /></b></small>
+                <button class="btn btn-dark form-control mt-3">Sign in</button>
+            </EditForm>
+
+        }
+
+    </div>
+
+
+
+
+</div>
+
+
+
+
+@code {
+    UserEmail _userEmail = new UserEmail();
+    UserEmailCode _userEmailCode = new UserEmailCode();
+
+    bool enterCode = false;
+
+    async Task HandleValidSubmit()
+    {
+        var userSignin = await AccountService.SendVerificationCodeAsync(_userEmail);
+
+        if (!userSignin.IsSuccess)
+            return;
+
+        _userEmailCode.Email = _userEmail.Email;
+        enterCode = true;
+    }
+
+    async Task HandleSignInSubmit()
+    {
+        var response = await AccountService.SignInAsync(_userEmailCode);
+
+        if(!response.IsSuccess)
+        {
+            _userEmail = new UserEmail();
+            _userEmailCode = new UserEmailCode();
+            enterCode = false;
+            return;
+        }
+
+        await StorageService.SaveUserAsync(response.Data);
+
+    }
+}

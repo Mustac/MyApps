@@ -1,0 +1,49 @@
+﻿@inherits LayoutComponentBase
+
+<div class="side-menu sidebar-left @sidebarLeft">
+    <h4 class="mt-4">Categories</h4>
+    @for(int i = 0; i < 15; i++)
+    {
+        <div class="img-category">
+            <img src="images/Parsley.png" class="img-fluid rounded border-dark shadow"/>
+        </div>
+    }
+</div>
+
+<div class="content-wrapper @contentExtendLeft @contentExtendRight">
+    <div class="content">
+       <button @onclick="SidebarLeftChange">Hide left sidebar</button>
+       <button @onclick="SidebarRightChange">Hide right sidebar</button>
+
+    </div>
+
+</div>
+
+<div class="side-menu sidebar-right @sidebarRight">
+
+</div>
+
+@code{
+    string sidebarLeft = string.Empty;
+    string sidebarRight = string.Empty;
+
+    string contentExtendLeft = string.Empty;
+    string contentExtendRight = string.Empty;
+
+
+    void SidebarLeftChange()
+    {
+        sidebarLeft = sidebarLeft == string.Empty ? "sidebar-left-hide" : string.Empty;
+        contentExtendLeft = sidebarLeft == string.Empty ? string.Empty : "content-left-extend";
+    }
+
+    void SidebarRightChange()
+    {
+        sidebarRight = sidebarRight == string.Empty ? "sidebar-right-hide" : string.Empty;
+        contentExtendRight = sidebarRight == string.Empty ? string.Empty : "content-right-extend";
+    }
+
+}
+    
+  
+
