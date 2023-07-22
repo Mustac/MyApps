@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using System.Security.Claims;
 
 namespace PosAppServer.Controllers
 {
@@ -16,7 +18,7 @@ namespace PosAppServer.Controllers
         }
 
 
-        [HttpPost("send-verification-code")]
+        [HttpPost("email-verification-code")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public async Task<ActionResult> SendVerificationCode(UserEmail userEmail)
@@ -51,6 +53,29 @@ namespace PosAppServer.Controllers
             }
 
         }
+
+
+        [HttpPut("update")]
+        [Authorize]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        public async Task<ActionResult> UpdateUser(UserUpdate userUpdate)
+        {
+            try
+            {
+                var userEmail = HttpContext.Items["UserEmail"].ToString();
+                var response = await _accountService.UpdateUserInfoAsync(userUpdate, userEmail);
+                return AutoResponse(response);
+            }
+            catch
+            {
+                return ServerError();
+            }
+
+        }
+
+
 
     }
 }

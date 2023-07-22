@@ -47,7 +47,7 @@
   <ItemGroup>
     <Compile Include="DataTransferModels\User\UserEmail.cs" />
     <Compile Include="DataTransferModels\User\UserSigninResponse.cs" />
-    <Compile Include="DataTransferModels\User\UserRegistration.cs" />
+    <Compile Include="DataTransferModels\User\UserUpdate.cs" />
     <Compile Include="ServerResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -9,9 +9,8 @@ namespace Shared.DataTransferModels.User
 {
     
 
-    public class UserRegistrationSimple
+    public class UserUpdate
     {
-        [Required]
         [StringLength(maximumLength: 20, MinimumLength = 3, ErrorMessage = "Name must be from 3 to 20 characters")]
         public string Name { get; set; } = string.Empty;
 
@@ -20,15 +19,6 @@ namespace Shared.DataTransferModels.User
 
         [StringLength(maximumLength: 20, MinimumLength = 3, ErrorMessage = "Company name must be from 3 to 20 characters")]
         public string Company { get; set; } = string.Empty;
-
-        [Required]
-        [StringLength(maximumLength: 8, MinimumLength = 4, ErrorMessage = "Password must be from 4 to 8 characters")]
-        public string Password { get; set; } = string.Empty;
     }
 
-    public class UserRegistration : UserRegistrationSimple
-    {
-        [Required]
-        public int Role { get; set; }
-    }
 }

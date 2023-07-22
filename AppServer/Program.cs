@@ -59,6 +59,8 @@ app.UseCors(builder =>
            .AllowAnyHeader();
 });
 
+app.UseMiddleware<JwtUserInfoMiddleware>();
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

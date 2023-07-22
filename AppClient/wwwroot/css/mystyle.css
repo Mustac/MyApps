@@ -70,6 +70,14 @@ main {
     width: 500px;
 }
 
+.skip-link{
+    cursor:pointer;
+}
+
+.skip-link:hover{
+    border-bottom:1px solid white;
+}
+
 
 @media (max-width: 991.98px) {
     .input-icon-dark-wrapper {

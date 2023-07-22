@@ -2,38 +2,91 @@
 @layout LoginLayout
 @inject AccountService AccountService
 @inject StorageService StorageService
+@inject IToastService ToastService
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthStateProvider
 
 <div class="form-center absolute-center">
     <div class="card-body p-4 p-sm-5">
-        @if (!enterCode)
+        @if (IsAuthenticated)
         {
-            <EditForm Model="@_userEmail" OnValidSubmit="@HandleValidSubmit">
-                <DataAnnotationsValidator />
-                <div class="input-icon-dark-wrapper">
-                    <span class="icon-attachement"><i class="fa-solid fa-user"></i></span>
-                    <InputText type="email" @bind-Value="_userEmail.Email" class="login-input" placeholder="Email" />
-                </div>
-                <small><b><ValidationMessage class="text-center mt-2 text-danger" For="@(() =>_userEmail.Email)" /></b></small>
-                <button type="submit" class="btn btn-dark form-control mt-2">Send signin code</button>
-            </EditForm>
+            <div style="background-color:gray; padding:20px; border-radius:5px;">
+                <p class="text-danger bg-light d-inline-block p-2 rounded mb-2">@_email</p>
+                <h5>Account is already authenticated</h5>
+                <p>Would you like to sign off</p>
+                <button @onclick='(() => NavigationManager.NavigateTo("/"))' class="btn btn-dark">No, Go back</button>
+                <button @onclick="SignOut" class="btn btn-outline-dark">Yes, sign me out</button>
+            </div>
         }
         else
         {
-            <EditForm Model="@_userEmailCode" OnValidSubmit="@HandleSignInSubmit">
-                <div class="input-icon-dark-wrapper">
-                    <span class="icon-attachement"><i class="fa-solid fa-user"></i></span>
-                    <InputText disabled type="text" @bind-Value="_userEmailCode.Email" class="login-input bg-dark" placeholder="Email" />
-                </div>
-                <div class="input-icon-dark-wrapper mt-3">
-                    <span class="icon-attachement"><i class="fa-solid fa-code"></i></span>
-                    <InputText type="text" @bind-Value="_userEmailCode.Code" class="login-input" placeholder="Code" />
-                </div>
-                <small><b><ValidationMessage class="text-center mt-2 text-danger" For="@(() =>_userEmailCode.Email)" /></b></small>
-                <button class="btn btn-dark form-control mt-3">Sign in</button>
-            </EditForm>
+            @if (_loginStage == LoginStage.EmailRequest)
+            {
+                <EditForm Model="@_userEmail" OnValidSubmit="@HandleValidSubmit">
+                    <DataAnnotationsValidator />
+                    <div class="input-icon-dark-wrapper">
+                        <span class="icon-attachement"><i class="fa-solid fa-user"></i></span>
+                        <InputText type="email" @bind-Value="_userEmail.Email" class="login-input" placeholder="Email" />
+                    </div>
+                    <small><b><ValidationMessage class="text-center mt-2 text-danger" For="@(() =>_userEmail.Email)" /></b></small>
+                    <button type="submit" class="btn btn-dark form-control mt-2">Send signin code</button>
+                </EditForm>
+            }
+            else if (_loginStage == LoginStage.CodeRequest)
+            {
+                <EditForm Model="@_userEmailCode" OnValidSubmit="@HandleSignInSubmit">
+                    <div class="input-icon-dark-wrapper">
+                        <span class="icon-attachement"><i class="fa-solid fa-user"></i></span>
+                        <InputText disabled type="text" @bind-Value="_userEmailCode.Email" class="login-input bg-dark" placeholder="Email" />
+                    </div>
+                    <div class="input-icon-dark-wrapper mt-3">
+                        <span class="icon-attachement"><i class="fa-solid fa-code"></i></span>
+                        <InputText type="text" @bind-Value="_userEmailCode.Code" class="login-input" placeholder="Code" />
+                    </div>
+                    <small><b><ValidationMessage class="text-center mt-2 text-danger" For="@(() =>_userEmailCode.Email)" /></b></small>
+                    <button class="btn btn-dark form-control mt-3">Sign in</button>
+                </EditForm>
+            }
+            else if (_loginStage == LoginStage.InfoUpdate)
+            {
+                <div class="text-white">
+                    <div class="bg-dark mb-3 p-2 rounded">
+                        <h6>Are you ready to give me more info about yourself?</h6>
+                        <hr class="my-1">
+                        <small style="font-size:0.6rem">!! This info is not mandatory, you can skip it and fill it up later</small>
+                    </div>
+                    <EditForm Model="@_userRegistration" OnValidSubmit="@HandleUpdateInfo">
+                        <DataAnnotationsValidator />
+                        <div class="input-icon-dark-wrapper">
+                            <span class="icon-attachement"><i class="fa-solid fa-signature"></i></span>
+                            <InputText type="text" @bind-Value="_userRegistration.Name" class="login-input" placeholder="First Name" />
+                        </div>
+                        <small><b><ValidationMessage class="text-center mt-2 text-danger" For="@(() =>_userRegistration.Name)" /></b></small>
 
+                        <div class="input-icon-dark-wrapper mt-3">
+                            <span class="icon-attachement"><i class="fa-solid fa-signature"></i></span>
+                            <InputText type="text" @bind-Value="_userRegistration.LastName" class="login-input" placeholder="Last Name" />
+                        </div>
+                        <small><b><ValidationMessage class="text-center mt-2 text-danger" For="@(() =>_userRegistration.LastName)" /></b></small>
+
+                        
+                        <div class="input-icon-dark-wrapper mt-3">
+                            <span class="icon-attachement"><i class="fa-solid fa-building"></i></span>
+                            <InputText type="text" @bind-Value="_userRegistration.Company" class="login-input" placeholder="Company" />
+                        </div>
+                        <small><b><ValidationMessage class="text-center mt-2 text-danger" For="@(() =>_userRegistration.Company)" /></b></small>
+
+                        <button type="submit" class="btn btn-dark d-block w-100 mt-3">Update</button>
+                        <small @onclick='(() => NavigationManager.NavigateTo("/"))' class="mt-2 d-block float-end skip-link">skip for now, I want to do it later</small>
+                    </EditForm>
+                </div>
+            }else if(_loginStage == LoginStage.SuccessUpdated)
+            {
+                <div style="background-color:gray; padding:20px; border-radius:5px;">
+                    <p class="d-inline-block p-2 rounded mb-2">Thank you for the update</p>
+                    <button @onclick='(() => NavigationManager.NavigateTo("/"))' class="btn btn-dark d-block w-100">Home page</button>
+                </div>
+            }
         }
 
     </div>
@@ -47,10 +100,25 @@
 
 
 @code {
+    LoginStage _loginStage = LoginStage.EmailRequest;
     UserEmail _userEmail = new UserEmail();
     UserEmailCode _userEmailCode = new UserEmailCode();
+    UserUpdate _userRegistration = new UserUpdate();
 
-    bool enterCode = false;
+    bool IsAuthenticated = false;
+    string? _email = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await UpdateUserAsync();
+    }
+
+    async Task UpdateUserAsync()
+    {
+        var result = await AuthStateProvider.GetAuthenticationStateAsync();
+        IsAuthenticated = result.User.Identity.IsAuthenticated;
+        _email = result.User.Identity.Name;
+    }
 
     async Task HandleValidSubmit()
     {
@@ -60,22 +128,55 @@
             return;
 
         _userEmailCode.Email = _userEmail.Email;
-        enterCode = true;
+        _loginStage = LoginStage.CodeRequest;
     }
 
     async Task HandleSignInSubmit()
     {
         var response = await AccountService.SignInAsync(_userEmailCode);
 
-        if(!response.IsSuccess)
+        if (!response.IsSuccess)
         {
             _userEmail = new UserEmail();
             _userEmailCode = new UserEmailCode();
-            enterCode = false;
+            _loginStage = LoginStage.EmailRequest;
             return;
         }
 
-        await StorageService.SaveUserAsync(response.Data);
+        await StorageService.SaveUserAsync(response.Data.JwtToken);
+        await AuthStateProvider.GetAuthenticationStateAsync();
 
+        if (response.Data.FirstSignin)
+        {
+            _loginStage = LoginStage.InfoUpdate;
+            return;
+        }
+
+        NavigationManager.NavigateTo("/");
+
+    }
+
+    async Task SignOut()
+    {
+        await StorageService.DeleteUserAsync();
+        await AuthStateProvider.GetAuthenticationStateAsync();
+        await UpdateUserAsync();
+        ToastService.ShowInfo("User sign out is a success");
+    }
+
+    async Task HandleUpdateInfo()
+    {
+        var response = await AccountService.UpdateInfoAsync(_userRegistration);
+        if (response.IsSuccess)
+            _loginStage = LoginStage.SuccessUpdated;
+    }
+
+
+    public enum LoginStage
+    {
+        EmailRequest,
+        CodeRequest,
+        InfoUpdate,
+        SuccessUpdated
     }
 }

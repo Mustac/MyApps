@@ -32,7 +32,7 @@ namespace PosAppServer.Services
 
             if (user is null)
             {
-                user = new User { Email = email, RoleId = 1, FirstLogin = true };
+                user = new User { Email = email, RoleId = 2, FirstLogin = true };
                 await _db.Users.AddAsync(user);
                 await _db.SaveChangesAsync();
                 user = await GetUserWithRolesAsync(email);
@@ -63,29 +63,71 @@ namespace PosAppServer.Services
             return new ServerResponse<object>(HttpStatusCode.OK, "Success");
         }
 
-        public async Task<ServerResponse<string>> SignInUserAsync(UserEmailCode userEmailCode)
+        public async Task<ServerResponse<UserSigninResponse>> SignInUserAsync(UserEmailCode userEmailCode)
         {
             var user = await GetUserWithRolesAsync(userEmailCode.Email);
 
             if (user is null)
-                return new ServerResponse<string>(HttpStatusCode.BadRequest, "Could not find the user with that email");
+                return new ServerResponse<UserSigninResponse>(HttpStatusCode.BadRequest, "Could not find the user with that email");
 
             var codes = user.ConfirmationCode.Split(":");
 
             DateTime codeCreated = new DateTime(int.Parse(codes[1]), int.Parse(codes[2]), int.Parse(codes[3]), int.Parse(codes[4]), int.Parse(codes[5]), 0);
 
             if (DateTime.Now < codeCreated)
-                return new ServerResponse<string>(HttpStatusCode.Unauthorized, "Verification token has expired");
+                return new ServerResponse<UserSigninResponse>(HttpStatusCode.Unauthorized, "Verification token has expired");
 
              if(codes.First() != userEmailCode.Code)
-                return new ServerResponse<string>(HttpStatusCode.Unauthorized, "Wrong code");
+                return new ServerResponse<UserSigninResponse>(HttpStatusCode.Unauthorized, "Wrong code");
 
             var token = CreateJWT(user);
 
-            return new ServerResponse<string>(HttpStatusCode.OK, "Sign in is a success", token);
+            ServerResponse<UserSigninResponse> response;
+
+            if(user.FirstLogin)
+            {
+                response = new ServerResponse<UserSigninResponse>(HttpStatusCode.OK, "Sign in is a success", new UserSigninResponse { JwtToken = token, FirstSignin = true });
+                user.FirstLogin = false;
+                _db.Users.Update(user);
+                await _db.SaveChangesAsync();
+            }
+            else
+            {
+                response = new ServerResponse<UserSigninResponse>(HttpStatusCode.OK, "Sign in is a success", new UserSigninResponse { JwtToken = token, FirstSignin = false });
+            }
+
+            return response;
+        }
+
+        public async Task<ServerResponse<object>> UpdateUserInfoAsync(UserUpdate userUpdate, string email)
+        {
+            var user = await GetUserWithRolesAsync(email);
+
+            if (user is null)
+                return new ServerResponse<object>(HttpStatusCode.BadRequest, "Could not find the user");
+
+            user.Name = userUpdate.Name; 
+            user.LastName = userUpdate.LastName;
+            user.CompanyName = userUpdate.Company;
+            
+            _db.Users.Update(user);
+            return await _db.SaveChangesAsync() > 0 ?
+                new ServerResponse<object>(HttpStatusCode.OK, "Update was a success") :
+                new ServerResponse<object>(HttpStatusCode.InternalServerError, "Could not update the user");
+
         }
 
 
+
+
+
+
+
+
+
+
+
+        /* in class use function */
 
         private async Task<User> GetUserWithRolesAsync(string email)
         {
@@ -99,7 +141,7 @@ namespace PosAppServer.Services
 
             var claims = new[]
             {
-                new Claim(ClaimTypes.Email, user.Email), 
+                new Claim(ClaimTypes.Name, user.Email), 
                 new Claim(ClaimTypes.Role, user.Role.Name)
             };
 

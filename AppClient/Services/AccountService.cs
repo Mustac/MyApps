@@ -15,11 +15,12 @@ namespace MyAppClient.Services
 
 
         public async Task<ServerResponse<object>> SendVerificationCodeAsync(UserEmail userEmail) =>
-            await _apiCallService.ApiPostAsync(userEmail, "account/send-verification-code", true);
+            await _apiCallService.ApiPostAsync(userEmail, "account/email-verification-code", true);
 
-        public async Task<ServerResponse<string>> SignInAsync(UserEmailCode userEmailCode) =>
-            await _apiCallService.ApiPostAsync<string, UserEmailCode>(userEmailCode, "account/signin", true);
+        public async Task<ServerResponse<UserSigninResponse>> SignInAsync(UserEmailCode userEmailCode) =>
+            await _apiCallService.ApiPostAsync<UserSigninResponse, UserEmailCode>(userEmailCode, "account/signin", true);
 
-
+        public async Task<ServerResponse<object>> UpdateInfoAsync(UserUpdate userRegistration) =>
+            await _apiCallService.ApiPutAsync(userRegistration, "account/update", true);
     }
 }

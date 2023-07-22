@@ -9,8 +9,8 @@ namespace Shared.DataTransferModels.User
 {
     public class UserSigninResponse
     {
-        public string Email { get; set; }
-        public string ConfirmationKey { get; set; }
+        public string JwtToken { get; set; }
+        public bool FirstSignin { get; set; }
 
     }
 }
