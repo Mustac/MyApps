@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MyAppServer.Models;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PosAppServer.Models
@@ -15,7 +16,9 @@ namespace PosAppServer.Models
 
         [ForeignKey("Role")]
         public int RoleId { get; set; }
-        public virtual Role? Role { get; set; } 
+        public virtual Role? Role { get; set; }
+
+        public ICollection<TodoList>? TodoLists { get; set; }
 
     }
 }

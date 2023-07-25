@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using MyAppServer.Services;
 using System.Security.Cryptography;
+using MyAppServer;
 
 namespace PosAppServer.Services
 {
@@ -77,14 +78,14 @@ namespace PosAppServer.Services
             if (DateTime.Now < codeCreated)
                 return new ServerResponse<UserSigninResponse>(HttpStatusCode.Unauthorized, "Verification token has expired");
 
-             if(codes.First() != userEmailCode.Code)
+            if (codes.First() != userEmailCode.Code)
                 return new ServerResponse<UserSigninResponse>(HttpStatusCode.Unauthorized, "Wrong code");
 
             var token = CreateJWT(user);
 
             ServerResponse<UserSigninResponse> response;
 
-            if(user.FirstLogin)
+            if (user.FirstLogin)
             {
                 response = new ServerResponse<UserSigninResponse>(HttpStatusCode.OK, "Sign in is a success", new UserSigninResponse { JwtToken = token, FirstSignin = true });
                 user.FirstLogin = false;
@@ -106,25 +107,17 @@ namespace PosAppServer.Services
             if (user is null)
                 return new ServerResponse<object>(HttpStatusCode.BadRequest, "Could not find the user");
 
-            user.Name = userUpdate.Name; 
+            user.Name = userUpdate.Name;
             user.LastName = userUpdate.LastName;
             user.CompanyName = userUpdate.Company;
-            
+
             _db.Users.Update(user);
+
             return await _db.SaveChangesAsync() > 0 ?
                 new ServerResponse<object>(HttpStatusCode.OK, "Update was a success") :
                 new ServerResponse<object>(HttpStatusCode.InternalServerError, "Could not update the user");
 
         }
-
-
-
-
-
-
-
-
-
 
 
         /* in class use function */
@@ -134,19 +127,43 @@ namespace PosAppServer.Services
             return await _db.Users.Include(x => x.Role).FirstOrDefaultAsync(x => x.Email == email);
         }
 
-        private string CreateJWT(User user)
+        /*private string CreateJWT(User user)
         {
-            var secretkey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWTKey")));
-            var credentials = new SigningCredentials(secretkey, SecurityAlgorithms.HmacSha256);
+            var jwtIssuer = Environment.GetEnvironmentVariable("JwtIssuer");
+            var jwtKey = Environment.GetEnvironmentVariable("JwtKey");
+            Console.WriteLine($"Creating JWT token with : \n Key : {jwtKey} \n Issuer : {jwtIssuer}");
 
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             var claims = new[]
             {
-                new Claim(ClaimTypes.Name, user.Email), 
-                new Claim(ClaimTypes.Role, user.Role.Name)
+                new Claim(ClaimTypes.Name,  user.Email),
+                new Claim(ClaimTypes.Name, user.Role.Name)
             };
+            var token = new JwtSecurityToken(jwtIssuer,
+                "", 
+                claims,
+                expires: DateTime.Now.AddDays(31),
+                signingCredentials: credentials);
 
-            var token = new JwtSecurityToken(claims: claims, expires: DateTime.Now.AddYears(100), signingCredentials: credentials);
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }*/
+
+        private string CreateJWT(User user)
+        {
+            var secretkey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(JwtSecrets.Key)); // NOTE: SAME KEY AS USED IN Program.cs FILE
+            var credentials = new SigningCredentials(secretkey, SecurityAlgorithms.HmacSha256);
+
+            var claims = new[] // NOTE: could also use List<Claim> here
+			{
+				new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.Email), // NOTE: this will be the "User.Identity.Name" value
+			};
+
+            var token = new JwtSecurityToken(issuer: JwtSecrets.Issuer, audience: JwtSecrets.Audience, claims: claims, expires: DateTime.Now.AddMonths(1), signingCredentials: credentials);
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
     }
 }

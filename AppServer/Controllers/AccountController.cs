@@ -56,7 +56,6 @@ namespace PosAppServer.Controllers
 
 
         [HttpPut("update")]
-        [Authorize]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]

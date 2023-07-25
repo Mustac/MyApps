@@ -38,6 +38,7 @@ builder.Services.AddBlazoredLocalStorage(config =>
     config.JsonSerializerOptions.WriteIndented = false;
 });
 
+builder.Services.AddScoped<TestService>();
 builder.Services.AddScoped<StorageService>();
 builder.Services.AddBlazoredToast();
 builder.Services.AddScoped<NotificationService>();

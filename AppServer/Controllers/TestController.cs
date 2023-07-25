@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection.Metadata.Ecma335;
 
 namespace PosAppServer.Controllers
 {
-    [ApiController] 
+    [ApiController]
+    [Authorize()]
     [Route("api/test")]
     public class TestController : ControllerBase
     {

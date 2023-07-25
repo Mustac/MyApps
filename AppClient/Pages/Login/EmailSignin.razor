@@ -167,6 +167,7 @@
     async Task HandleUpdateInfo()
     {
         var response = await AccountService.UpdateInfoAsync(_userRegistration);
+
         if (response.IsSuccess)
             _loginStage = LoginStage.SuccessUpdated;
     }
