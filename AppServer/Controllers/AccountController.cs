@@ -18,7 +18,7 @@ namespace PosAppServer.Controllers
         }
 
 
-        [HttpPost("email-verification-code")]
+        [HttpPost("signin/send-token")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public async Task<ActionResult> SendVerificationCode(UserEmail userEmail)
@@ -36,7 +36,7 @@ namespace PosAppServer.Controllers
         }
 
 
-        [HttpPost("signin")]
+        [HttpPost("signin/verify-token")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]

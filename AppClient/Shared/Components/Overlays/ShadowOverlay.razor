@@ -1,5 +1,11 @@
-﻿<div class="shadow-overlay"> </div>
+﻿<div @onclick="OverlayClicked" class="shadow-overlay"> </div>
 
 @code {
+    [Parameter]
+    public EventCallback OnOverlayClicked { get; set; }
 
+    void OverlayClicked()
+    {
+        OnOverlayClicked.InvokeAsync();
+    }
 }

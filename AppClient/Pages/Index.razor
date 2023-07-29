@@ -1,8 +1,13 @@
 ﻿@inject TestService TestService
+@attribute [Authorize]
+
 
 @page "/"
-
-<button class="btn btn-outline-dark m-5" @onclick="TestAsync">Test</button>
+<AuthorizeView>
+    <Authorized>
+        <button class="btn btn-outline-dark m-5" @onclick="TestAsync">Test</button>
+    </Authorized>
+</AuthorizeView>
 
 @code{
 

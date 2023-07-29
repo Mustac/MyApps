@@ -116,7 +116,6 @@ namespace PosAppServer.Services
             return await _db.SaveChangesAsync() > 0 ?
                 new ServerResponse<object>(HttpStatusCode.OK, "Update was a success") :
                 new ServerResponse<object>(HttpStatusCode.InternalServerError, "Could not update the user");
-
         }
 
 

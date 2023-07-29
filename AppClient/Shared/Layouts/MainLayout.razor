@@ -1,25 +1,10 @@
 ﻿@inherits LayoutComponentBase
-@using Blazored.Toast.Configuration
-@inject StorageService StorageService
-@inject NavigationManager NavigationManager
 
 
-<BlazoredToasts Position="ToastPosition.BottomRight"
-                Timeout="2"
-                IconType="IconType.FontAwesome"
-                SuccessClass="success-toast-override"
-                SuccessIcon="fa fa-thumbs-up"
-                ErrorIcon="fa fa-bug" />
 
-
-    @Body
+<Navigation/>
+@* @Body*@
 
 
 
 
-@code {
- 
-
- 
-
-}
