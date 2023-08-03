@@ -4,7 +4,7 @@
 @inject IJSRuntime JSRuntime
 
     <button @onclick="NavButtonClick" class="btn-nav @navBarButtonClass">
-        <i class="fa-solid @(navShow?"fa-xmark":"fa-bars") fa-2x "></i>
+        <i class="fa-solid @(DefaultNavShow?"fa-xmark":"fa-bars") fa-2x "></i>
     </button>
 
 
@@ -22,15 +22,17 @@
     </ul>
 </div>
 
-@if(navShow)
+@if(DefaultNavShow)
 {
     <ShadowOverlay OnOverlayClicked="NavButtonClick"/>
 }
 
 @code {
     const string sidebarClassActive = "sidebar-nav-show";
-    const string navBarButtonX = "btn-nav-x";
-    bool navShow = true;
+    const string navBarButtonX = "btn-nav-burger";
+
+    [Parameter]
+    public bool DefaultNavShow { get; set; } = false;
 
     string sidebarClass = "sidebar-nav-show";
     string navBarButtonClass = "";
@@ -38,6 +40,7 @@
     protected override void OnInitialized()
     {
         NavigationManager.LocationChanged += HandleLocationChanged;
+        SwitchNav();
     }
 
     private void HandleLocationChanged(object sender, LocationChangedEventArgs e)
@@ -47,9 +50,13 @@
 
     void NavButtonClick()
     {
-        navShow = !navShow;
+        DefaultNavShow = !DefaultNavShow;
+        SwitchNav();
+    }
 
-        if (navShow)
+    void SwitchNav()
+    {
+        if (DefaultNavShow)
         {
             sidebarClass = sidebarClassActive;
             navBarButtonClass = "";
@@ -58,8 +65,7 @@
 
         navBarButtonClass = navBarButtonX;
         sidebarClass = "";
-        SidebarService.SideBarChanged(navShow);
-
+        SidebarService.SideBarChanged(DefaultNavShow);
     }
 
     async Task NavClicked()
@@ -67,7 +73,7 @@
         int screenWidth = await JSRuntime.InvokeAsync<int>("screenWidth");
         Console.WriteLine(screenWidth + " width ");
 
-        if (screenWidth<=600)
+        if (screenWidth<=450)
             NavButtonClick();
 
     }

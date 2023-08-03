@@ -1,6 +1,40 @@
 ﻿@page "/app/todo"
 
-<h3>TodoApp</h3>
+<div class="container">
+    <div class="row mt-5">
+        <div class="col-4 text-white">
+            <h3 class="fw-bolder pt-1 pl-1">My Todo Lists</h3>
+            <hr class="d-block mb-2 p-0" style="margin-top:12px" />
+
+            <ul class="d-block pl-2">
+                <li><i class="fa-regular fa-circle"></i><div class="todo-category-active">Today</div></li>
+                <li><i class="fa-regular fa-circle"></i><div>Tomorrow</div></li>
+                <li><i class="fa-regular fa-circle"></i><div>Excercise</div></li>
+            </ul>
+
+           <div class="input-group mb-3 mt-3">
+  <input type="text" class="form-control" placeholder="Create new Todo" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+  <button class="input-group-text btn btn-dark" id="inputGroup-sizing-default">Add</button>
+</div>
+
+        </div>
+        <div class="col-8 bg-white rounded p-0" style="min-height:500px;">
+            <div class="title d-flex align-items-center">
+                <h4 class="m-2 fw-bold"><i class="fa-regular fa-circle">&nbsp;</i>Today</h4>
+            </div>
+            <div class="p-3">
+                <ul>
+                    <li class="todo-item"><i class="fa-regular fa-circle"></i>&nbsp;<span>Do smthing</span></li>
+                    <li class="todo-item"><i class="fa-regular fa-circle-check text-success"></i>&nbsp;<span class="todo-done">Do smthing</span></li>
+                </ul>
+                <div class="input-group mb-3 mt-3">
+  <input type="text" class="form-control" placeholder="Create a Task" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+  <button class="input-group-text btn btn-dark" id="inputGroup-sizing-default">Add</button>
+</div>
+            </div>
+        </div>
+    </div>
+</div>
 
 @code {
 

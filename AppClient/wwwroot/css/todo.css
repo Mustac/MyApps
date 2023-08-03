@@ -1,0 +1,27 @@
+﻿.title {
+    height: 50px;
+    background-color: #6D6488;
+    color:white;
+}
+
+.todo-item {
+    display: block;
+    font-size: 20px;
+    padding: 15px;
+    border-bottom: 1px solid gray;
+    transition: 0.25s all;
+}
+
+.todo-done{
+    text-decoration:line-through;
+    color:gray;
+}
+
+.todo-item:hover {
+    font-size: 23px;
+}
+
+.todo-category-active{
+    text-decoration:underline;
+    font-size:18px;
+}

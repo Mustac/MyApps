@@ -1,0 +1,18 @@
+﻿.container{
+    max-width:800px !important;
+}
+
+ul li div{
+    display:inline-block;
+    padding-left:8px;
+}
+
+ul li{
+    cursor:pointer;
+    margin-bottom:5px;
+}
+
+ul li div:hover{
+    text-decoration:underline;
+    opacity:0.95;
+}

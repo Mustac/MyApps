@@ -39,6 +39,10 @@ main {
     transform:translate(-50%, -50%);
 }
 
+.title{
+    font-weight:800
+}
+
 .icon-attachement {
     background-color: #363B40;
     display: inline-block;
@@ -244,7 +248,7 @@ main {
     }
 
     .sidebar-nav {
-        background-color: #27374D;
+        background-color: #27374D;  
         height: 100vh;
         width: 100%;
         color: #DDE6ED;
@@ -279,7 +283,7 @@ main {
 }
 
 @media (min-width: 449.99px) {
-    .btn-nav-x {
+    .btn-nav-burger {
         transform: translateX(-240px);
     }
 }

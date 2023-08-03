@@ -11,6 +11,11 @@
 
   <ItemGroup>
     <None Remove="Pages\Login\EmailLogin.razor.css" />
+    <None Remove="Pages\TodoApp.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Pages\TodoApp.razor.css" />
   </ItemGroup>
 
   <ItemGroup>
