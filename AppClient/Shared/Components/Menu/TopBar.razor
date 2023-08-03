@@ -1,0 +1,51 @@
+﻿@inject SidebarService SidebarService
+
+<div class="top-bar-wrapper">
+
+    <AuthorizeView>
+        <Authorized>
+            <div class="top-bar @topBarClass">
+                <div></div>
+                <div style="min-width:100px;">
+                    <button class="btn-topbar wh40px"><i class="fa-solid fa-user"></i></button>
+                    <button class="btn-topbar wh40px"><i class="fa-solid fa-gear"></i></button>
+                </div>
+            </div>
+        </Authorized>
+        <NotAuthorized>
+            <div class="top-bar @topBarClass">
+                <div></div>
+                <div>
+                    <NavLink class="btn-topbar" href="/login">Sign in</NavLink>
+                </div>
+            </div>
+
+        </NotAuthorized>
+    </AuthorizeView>
+
+
+
+
+</div>
+
+@code {
+    const string topBarClassActive = "top-bar-nav-open";
+    string topBarClass = "top-bar-nav-open";
+
+    protected override void OnInitialized()
+    {
+        SidebarService.OnNavbarChange += NavBarChanged;
+    }
+
+    void NavBarChanged(bool state)
+    {
+        Console.WriteLine("Test " + state);
+        topBarClass = state ? topBarClassActive : "";
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        SidebarService.OnNavbarChange -= NavBarChanged;
+    }
+}

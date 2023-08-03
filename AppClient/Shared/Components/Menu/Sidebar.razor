@@ -1,0 +1,74 @@
+﻿@inject StorageService StorageService
+@inject NavigationManager NavigationManager
+@inject SidebarService SidebarService
+@inject IJSRuntime JSRuntime
+
+    <button @onclick="NavButtonClick" class="btn-nav @navBarButtonClass">
+        <i class="fa-solid @(navShow?"fa-xmark":"fa-bars") fa-2x "></i>
+    </button>
+
+
+
+<div class="sidebar-nav @sidebarClass">
+ 
+    <h5 class="text-center p-3">Navigation</h5>
+    <ul class="nav-menu">
+        <NavLink @onclick="NavClicked" href="/" class="navi-item" ActiveClass="navi-active" Match="NavLinkMatch.All"><i class="fa-solid fa-house"></i><span>Home</span></NavLink>
+        <NavLink @onclick="NavClicked" href="/app/todo" class="navi-item" ActiveClass="navi-active" Match="NavLinkMatch.All">
+            <i class="fa-solid fa-list-check"></i><span>Todo App</span>
+            
+        </NavLink>
+
+    </ul>
+</div>
+
+@if(navShow)
+{
+    <ShadowOverlay OnOverlayClicked="NavButtonClick"/>
+}
+
+@code {
+    const string sidebarClassActive = "sidebar-nav-show";
+    const string navBarButtonX = "btn-nav-x";
+    bool navShow = true;
+
+    string sidebarClass = "sidebar-nav-show";
+    string navBarButtonClass = "";
+
+    protected override void OnInitialized()
+    {
+        NavigationManager.LocationChanged += HandleLocationChanged;
+    }
+
+    private void HandleLocationChanged(object sender, LocationChangedEventArgs e)
+    {
+        Console.WriteLine("Location Changed");
+    }
+
+    void NavButtonClick()
+    {
+        navShow = !navShow;
+
+        if (navShow)
+        {
+            sidebarClass = sidebarClassActive;
+            navBarButtonClass = "";
+            return;
+        }
+
+        navBarButtonClass = navBarButtonX;
+        sidebarClass = "";
+        SidebarService.SideBarChanged(navShow);
+
+    }
+
+    async Task NavClicked()
+    {
+        int screenWidth = await JSRuntime.InvokeAsync<int>("screenWidth");
+        Console.WriteLine(screenWidth + " width ");
+
+        if (screenWidth<=600)
+            NavButtonClick();
+
+    }
+}

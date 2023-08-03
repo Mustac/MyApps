@@ -42,6 +42,7 @@ builder.Services.AddScoped<TestService>();
 builder.Services.AddScoped<StorageService>();
 builder.Services.AddBlazoredToast();
 builder.Services.AddScoped<NotificationService>();
+builder.Services.AddSingleton<SidebarService>();
 
 builder.Services.AddAuthorizationCore();
 
