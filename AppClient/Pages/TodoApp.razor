@@ -1,4 +1,7 @@
 ﻿@page "/app/todo"
+@inject TodoService TodoService
+@attribute [Authorize]
+
 
 <div class="container">
     <div class="row mt-5">
@@ -12,10 +15,14 @@
                 <li><i class="fa-regular fa-circle"></i><div>Excercise</div></li>
             </ul>
 
-           <div class="input-group mb-3 mt-3">
-  <input type="text" class="form-control" placeholder="Create new Todo" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
-  <button class="input-group-text btn btn-dark" id="inputGroup-sizing-default">Add</button>
-</div>
+            <EditForm Model="_todoListRegistration" OnValidSubmit="RegisterNewListAsync">
+                <div class="input-group mb-3 mt-3">
+                    <DataAnnotationsValidator/>
+                    <InputText type="text" class="form-control" @bind-Value="_todoListRegistration.Name" placeholder="Create new Todo" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default"></InputText>
+                    <button class="input-group-text btn btn-dark" id="inputGroup-sizing-default">Add</button>
+                </div>
+                <div class="bg-white rounded shadow"><small class="text-danger "><ValidationMessage class="p-2 " For="@(()=>_todoListRegistration.Name)"></ValidationMessage></small></div>
+            </EditForm>
 
         </div>
         <div class="col-8 bg-white rounded p-0" style="min-height:500px;">
@@ -28,14 +35,20 @@
                     <li class="todo-item"><i class="fa-regular fa-circle-check text-success"></i>&nbsp;<span class="todo-done">Do smthing</span></li>
                 </ul>
                 <div class="input-group mb-3 mt-3">
-  <input type="text" class="form-control" placeholder="Create a Task" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
-  <button class="input-group-text btn btn-dark" id="inputGroup-sizing-default">Add</button>
-</div>
+                    <input type="text" class="form-control" placeholder="Create a Task" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                    <button class="input-group-text btn btn-dark" id="inputGroup-sizing-default">Add</button>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 @code {
+    TodoListRegistration _todoListRegistration = new TodoListRegistration();
 
+    async Task RegisterNewListAsync()
+    {
+        var response = await TodoService.CreateNewListAsnyc(_todoListRegistration);
+
+    }
 }

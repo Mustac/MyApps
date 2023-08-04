@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataTransferModels\Todo\TodoListRegistration.cs" />
     <Compile Include="DataTransferModels\User\UserEmail.cs" />
     <Compile Include="DataTransferModels\User\UserSigninResponse.cs" />
     <Compile Include="DataTransferModels\User\UserUpdate.cs" />

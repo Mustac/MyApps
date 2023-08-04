@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MyAppServer.Models;
 using PosAppServer.Models;
 
 namespace PosAppServer.Data
@@ -12,6 +13,8 @@ namespace PosAppServer.Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
+        public DbSet<TodoList> TodoLists { get; set; }
+        public DbSet<TodoItem> TodoItems { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

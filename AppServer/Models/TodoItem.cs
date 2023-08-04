@@ -6,6 +6,7 @@ namespace MyAppServer.Models
     {
         public int Id { get; set; }
         public string TaskName { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
         public bool IsCompleted { get; set; }
 
 

@@ -17,6 +17,7 @@ global using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 global using MyAppClient.Helpers;
 global using MyAppClient;
 global using MyAppClient.Shared.Components.Modals;
+global using Shared.DataTransferModels.Todo;
 
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -43,6 +44,7 @@ builder.Services.AddScoped<StorageService>();
 builder.Services.AddBlazoredToast();
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddSingleton<SidebarService>();
+builder.Services.AddScoped<TodoService>();
 
 builder.Services.AddAuthorizationCore();
 

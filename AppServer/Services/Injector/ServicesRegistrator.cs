@@ -8,6 +8,8 @@ namespace PosAppServer.Services.Injector
         {
             services.AddScoped<MailJetService>();
             services.AddScoped<AccountService>();
+            services.AddScoped<TodoService>();
+
         }
     }
 }
