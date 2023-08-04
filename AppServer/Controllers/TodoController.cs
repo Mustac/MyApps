@@ -22,7 +22,8 @@ namespace MyAppServer.Controllers
         }
 
         [HttpPost("list/create")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.Created)]
+        [ProducesResponseType((int)HttpStatusCode.Conflict)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
         public async Task<ActionResult> CreateNewListAsync(TodoListRegistration todoList)
         {
@@ -35,13 +36,40 @@ namespace MyAppServer.Controllers
             {
                 return ServerError();
             }
-
-
         }
 
-       
+        [HttpGet("list/all")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        public async Task<ActionResult> GetListsAsync()
+        {
+            try
+            {
+                var response = await _todoService.GetTodoListsInfoAsync(UserId);
+                return AutoResponse(response);
+            }
+            catch
+            {
+                return ServerError();
+            }
+        }
+
+        [HttpGet("item/bylistid/{listid}")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        public async Task<ActionResult> GetItemsByListIdAsync(int listId)
+        {
+            try
+            {
+                var response = await _todoService.GetTodoItemsByListIdAsync(listId, UserId);
+                return AutoResponse(response);
+            }
+            catch
+            {
+                return ServerError();
+            }
+        }
 
 
-     
     }
 }

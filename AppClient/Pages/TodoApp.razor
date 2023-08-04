@@ -1,5 +1,6 @@
 ﻿@page "/app/todo"
 @inject TodoService TodoService
+@inject IToastService ToastService
 @attribute [Authorize]
 
 
@@ -10,14 +11,29 @@
             <hr class="d-block mb-2 p-0" style="margin-top:12px" />
 
             <ul class="d-block pl-2">
-                <li><i class="fa-regular fa-circle"></i><div class="todo-category-active">Today</div></li>
-                <li><i class="fa-regular fa-circle"></i><div>Tomorrow</div></li>
-                <li><i class="fa-regular fa-circle"></i><div>Excercise</div></li>
+                @if (_todoListInfos is not null)
+                {
+                    @* Active class = todo-category-active *@
+                    @foreach (var list in _todoListInfos)
+                    {
+                        <li>
+                            <i class="fa-regular fa-circle"></i>
+                            <div class="@(list == selectedList?"todo-category-active":"")"
+                         @onclick="@(()=>ListClickedAsync(list))">
+                                @list.Name
+                            </div>
+                        </li>
+                    }
+                }
+                else
+                {
+                    <p>Loading ....</p>
+                }
             </ul>
 
             <EditForm Model="_todoListRegistration" OnValidSubmit="RegisterNewListAsync">
                 <div class="input-group mb-3 mt-3">
-                    <DataAnnotationsValidator/>
+                    <DataAnnotationsValidator />
                     <InputText type="text" class="form-control" @bind-Value="_todoListRegistration.Name" placeholder="Create new Todo" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default"></InputText>
                     <button class="input-group-text btn btn-dark" id="inputGroup-sizing-default">Add</button>
                 </div>
@@ -26,13 +42,26 @@
 
         </div>
         <div class="col-8 bg-white rounded p-0" style="min-height:500px;">
-            <div class="title d-flex align-items-center">
-                <h4 class="m-2 fw-bold"><i class="fa-regular fa-circle">&nbsp;</i>Today</h4>
+            <div class="title d-flex align-items-center @(selectedList.IsCompleted?"bg-success":"bg-gray")">
+                <h4 class="m-2 fw-bold"><i class="fa-regular @(selectedList.IsCompleted?"fa-circle-check":"fa-circle")">&nbsp;</i>@selectedList.Name</h4>
             </div>
             <div class="p-3">
                 <ul>
-                    <li class="todo-item"><i class="fa-regular fa-circle"></i>&nbsp;<span>Do smthing</span></li>
-                    <li class="todo-item"><i class="fa-regular fa-circle-check text-success"></i>&nbsp;<span class="todo-done">Do smthing</span></li>
+                    @if (_todoItems is not null)
+                    {
+                        @foreach (var item in _todoItems)
+                        {
+                            @if (item.IsCompleted)
+                            {
+                                <li class="todo-item"><i class="fa-regular fa-circle-check text-success"></i>&nbsp;<span class="todo-done">@item.Name</span></li>
+                            }
+                            else
+                            {
+                                <li class="todo-item"><i class="fa-regular fa-circle"></i>&nbsp;<span>@item.Name</span></li>
+                            }
+
+                        }
+                    }
                 </ul>
                 <div class="input-group mb-3 mt-3">
                     <input type="text" class="form-control" placeholder="Create a Task" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
@@ -45,10 +74,62 @@
 
 @code {
     TodoListRegistration _todoListRegistration = new TodoListRegistration();
+    IEnumerable<TodoListInfo> _todoListInfos = new List<TodoListInfo>();
+    IEnumerable<TodoItemInfo> _todoItems = new List<TodoItemInfo>();
+    TodoListInfo selectedList = new TodoListInfo();
+
+
+
+    protected async override Task OnInitializedAsync()
+    {
+        _todoListInfos = await GetAllListsAsync();
+    }
 
     async Task RegisterNewListAsync()
     {
         var response = await TodoService.CreateNewListAsnyc(_todoListRegistration);
 
+        if (!response.IsSuccess)
+            return;
+
+        _todoListRegistration = new TodoListRegistration();
+        _todoListInfos = await GetAllListsAsync();
+        StateHasChanged();
     }
+
+
+    async Task ListClickedAsync(TodoListInfo listInfo)
+    {
+        selectedList = listInfo;
+        _todoItems = await GetItemByListId(selectedList.Id);
+    }
+
+    async Task<IEnumerable<TodoItemInfo>> GetItemByListId(int id)
+    {
+        var response = await TodoService.GetTodoItemsByIdAsync(id);
+
+        if (response.IsSuccess)
+            if (response.Data is not null)
+                return response.Data;
+
+        return new List<TodoItemInfo>();
+    }
+
+    async Task<IEnumerable<TodoListInfo>> GetAllListsAsync()
+    {
+        var response = await TodoService.GetTodoListsAsync();
+
+        if (response.IsSuccess)
+            if (response.Data is not null)
+            {
+                return response.Data;
+            }
+
+        //ToastService.ShowError(response.Message);
+        return new List<TodoListInfo>();
+    }
+
+
+
+
 }

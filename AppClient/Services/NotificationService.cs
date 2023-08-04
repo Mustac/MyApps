@@ -18,7 +18,7 @@ namespace MyAppClient.Services
             {
                 case HttpStatusCode.OK:
                 case HttpStatusCode.Created:
-                    _toastService.ShowSuccess(message);
+                    _toastService.ShowInfo(message);
                     break;
 
                 case HttpStatusCode.Unauthorized:

@@ -1,4 +1,6 @@
 ﻿using MyAppServer.Models;
+using Shared.DataTransferModels.Todo;
+using System.Reflection.Metadata.Ecma335;
 
 namespace MyAppServer.Services
 {
@@ -31,6 +33,43 @@ namespace MyAppServer.Services
             return await _db.SaveChangesAsync() > 0 ?
                 new ServerResponse<object>(HttpStatusCode.Created, "New List Created") :
                 new ServerResponse<object>(HttpStatusCode.ServiceUnavailable, "Unable to create new list, try again later");
+
+        }
+
+        public async Task<ServerResponse<IEnumerable<TodoListInfo>>> GetTodoListsInfoAsync(int id)
+        {
+            var lists = await _db.TodoLists.Select(x =>
+            new TodoListInfo
+            {
+                Id = x.Id,
+                DateCreated = x.CreatedAt,
+                IsCompleted = x.IsCompleted,
+                Name = x.Name
+            }
+            ).ToListAsync();
+
+            return lists is not null ?
+                new ServerResponse<IEnumerable<TodoListInfo>>(HttpStatusCode.OK, "Success", lists) :
+                new ServerResponse<IEnumerable<TodoListInfo>>(HttpStatusCode.ServiceUnavailable, "Unable to read from database, try again later");
+        }
+
+        public async Task<ServerResponse<IEnumerable<TodoItemInfo>>> GetTodoItemsByListIdAsync(int listId, int userId)
+        {
+            var items = await _db.TodoItems
+                .Where(x => x.TodoListId == listId && x.TodoList.UserId == userId)
+                .Select(x =>
+                    new TodoItemInfo
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                        IsCompleted = x.IsCompleted
+                    }
+                ).ToListAsync();
+
+
+            return items is not null ?
+                new ServerResponse<IEnumerable<TodoItemInfo>>(HttpStatusCode.OK, "Success", items) :
+                new ServerResponse<IEnumerable<TodoItemInfo>>(HttpStatusCode.ServiceUnavailable, "Unable to read from database, try again later");
 
         }
     }

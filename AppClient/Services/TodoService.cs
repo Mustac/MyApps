@@ -11,10 +11,17 @@ namespace MyAppClient.Services
         public TodoService(ApiCallService apiCallService)
         {
             _apiCallService = apiCallService;
+
         }
 
         public async Task<ServerResponse<object>> CreateNewListAsnyc(TodoListRegistration todoList) =>
              await _apiCallService.ApiPostAsync(todoList, "todo/list/create", true);
+
+        public async Task<ServerResponse<IEnumerable<TodoListInfo>>> GetTodoListsAsync() =>
+            await _apiCallService.ApiGetAsync<IEnumerable<TodoListInfo>>("todo/list/all", false);
+
+        public async Task<ServerResponse<IEnumerable<TodoItemInfo>>> GetTodoItemsByIdAsync(int id) =>
+            await _apiCallService.ApiGetAsync<IEnumerable<TodoItemInfo>>($"todo/item/bylistid/{id}");
 
     }
 }
