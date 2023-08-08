@@ -71,5 +71,22 @@ namespace MyAppServer.Controllers
         }
 
 
+        [HttpDelete("list/delete/{listid}")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        public async Task<ActionResult> DeleteListAsync(int listId)
+        {
+            try
+            {
+                var response = await _todoService.DeleteListAsync(listId, UserId);
+                return AutoResponse(response);
+            }
+            catch
+            {
+                return ServerError();
+            }
+        }
+
+
     }
 }

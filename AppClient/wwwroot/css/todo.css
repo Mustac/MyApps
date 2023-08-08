@@ -29,3 +29,19 @@
 .bg-gray{
     background-color:gray;
 }
+
+.btn-delete{
+    width:25px;
+    height:25px;
+    transition:0.25s all;
+    padding:1px;
+}
+
+    .btn-delete:hover {
+        transform:scale(1.05);
+        box-shadow: rgba(0, 0, 0, 0.5) 0px 4px 12px;
+    }
+
+    .btn:focus{
+        outline:unset !important; 
+    }

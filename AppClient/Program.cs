@@ -18,7 +18,7 @@ global using MyAppClient.Helpers;
 global using MyAppClient;
 global using MyAppClient.Shared.Components.Modals;
 global using Shared.DataTransferModels.Todo;
-
+using MyAppClient.Services.Components;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -45,6 +45,7 @@ builder.Services.AddBlazoredToast();
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddSingleton<SidebarService>();
 builder.Services.AddScoped<TodoService>();
+builder.Services.AddScoped<ConfirmationModalService>();
 
 builder.Services.AddAuthorizationCore();
 

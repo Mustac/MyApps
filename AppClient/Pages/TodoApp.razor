@@ -1,6 +1,7 @@
 ﻿@page "/app/todo"
 @inject TodoService TodoService
 @inject IToastService ToastService
+@inject ConfirmationModalService ConfirmationModalService
 @attribute [Authorize]
 
 
@@ -22,6 +23,9 @@
                          @onclick="@(()=>ListClickedAsync(list))">
                                 @list.Name
                             </div>
+                            <button @onclick="@(()=>DeleteListAsync(list))" class="float-end btn btn-sm btn-danger btn-delete border-dark border-2">
+                                <i class="fa-solid fa-xmark text-light"></i>
+                            </button>
                         </li>
                     }
                 }
@@ -94,6 +98,10 @@
 
         _todoListRegistration = new TodoListRegistration();
         _todoListInfos = await GetAllListsAsync();
+
+        if (_todoListInfos.Count() > 0)
+            selectedList = _todoListInfos.LastOrDefault();
+
         StateHasChanged();
     }
 
@@ -129,6 +137,18 @@
         return new List<TodoListInfo>();
     }
 
+    async Task DeleteListAsync(TodoListInfo todoListInfo)
+    {
+        bool confirmation = await ConfirmationModalService.Show("Delete List", $"Are you sure you want to delete list >{todoListInfo.Name}< ?");
+
+        if(confirmation)
+        {
+            await TodoService.DeleteListAsync(todoListInfo.Id);
+            selectedList = new TodoListInfo();
+            _todoListInfos = await GetAllListsAsync();
+        }
+
+    }
 
 
 

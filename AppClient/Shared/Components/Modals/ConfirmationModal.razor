@@ -1,0 +1,57 @@
+﻿@using MyAppClient.Services.Components;
+@inject ConfirmationModalService ConfirmationModalService
+
+@if (showModal)
+{
+    <ShadowOverlay OnOverlayClicked="OverlayClicked" />
+
+    <div class="confimation-modal">
+        <h5 class="text text-center bg-black text-white">@title</h5>
+        <p class="p-3 text-center">@description</p>
+        <div class="text-center">
+            <button @onclick="@(()=>Clicked(false))" class="btn btn-light border">Cancel</button>
+            <button @onclick="@(()=>Clicked(true))" class="btn btn-danger">Accept</button>
+        </div>
+    </div>
+}
+
+
+
+@code {
+    bool showModal = false;
+    string title = "";
+    string description = "";
+
+
+    protected override void OnInitialized()
+    {
+        ConfirmationModalService.ConfirmationModal = this;
+    }
+
+    void OverlayClicked()
+    {
+        showModal = false;
+    }
+
+    public void ShowModal(bool status){
+        Console.WriteLine("Confirm " + status);
+        showModal = status;
+        if (status)
+            StateHasChanged();
+    }
+
+    void Clicked(bool status)
+    {
+        ConfirmationModalService.OnButtonClick(status);
+        
+    }
+
+
+    public void SetInfo(string title, string description)
+    {
+        this.title = title;
+        this.description = description;
+        showModal = true;
+    }
+
+}

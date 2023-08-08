@@ -23,5 +23,7 @@ namespace MyAppClient.Services
         public async Task<ServerResponse<IEnumerable<TodoItemInfo>>> GetTodoItemsByIdAsync(int id) =>
             await _apiCallService.ApiGetAsync<IEnumerable<TodoItemInfo>>($"todo/item/bylistid/{id}");
 
+        public async Task<ServerResponse<object>> DeleteListAsync(int id) =>
+            await _apiCallService.ApiDeleteAsync($"todo/list/delete/{id}", true);
     }
 }

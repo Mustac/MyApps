@@ -72,5 +72,19 @@ namespace MyAppServer.Services
                 new ServerResponse<IEnumerable<TodoItemInfo>>(HttpStatusCode.ServiceUnavailable, "Unable to read from database, try again later");
 
         }
+
+        public async Task<ServerResponse<object>> DeleteListAsync(int listId, int userId)
+        {
+            var list = await _db.TodoLists.FirstOrDefaultAsync(x=> listId== x.Id && x.UserId == userId);
+
+            if (list is null)
+                return new ServerResponse<object>(HttpStatusCode.BadRequest, "Could not find that list");
+
+            _db.TodoLists.Remove(list);
+
+            return await _db.SaveChangesAsync() > 0 ?
+                new ServerResponse<object>(HttpStatusCode.OK, $"List > {list.Name} < has been removed ") :
+                new ServerResponse<object>(HttpStatusCode.InternalServerError, "Server error, try again later");
+        }
     }
 }
