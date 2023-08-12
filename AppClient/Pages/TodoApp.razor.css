@@ -11,8 +11,3 @@ ul li{
     cursor:pointer;
     margin-bottom:5px;
 }
-
-ul li div:hover{
-    text-decoration:underline;
-    opacity:0.95;
-}

@@ -1,6 +1,5 @@
 ﻿.title {
     height: 50px;
-    background-color: #6D6488;
     color:white;
 }
 
@@ -21,9 +20,10 @@
     font-size: 23px;
 }
 
-.todo-category-active{
-    text-decoration:underline;
-    font-size:18px;
+.todo-category-active {
+    font-weight: bolder;
+    background-color: lightblue !important;
+    color: black !important;
 }
 
 .bg-gray{
@@ -45,3 +45,11 @@
     .btn:focus{
         outline:unset !important; 
     }
+
+.todo-list {
+    
+    padding: 4px 10px;
+    border-radius: 5px;
+    background-color: #27374D;
+    color: white;
+}

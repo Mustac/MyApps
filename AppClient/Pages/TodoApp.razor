@@ -17,10 +17,10 @@
                     @* Active class = todo-category-active *@
                     @foreach (var list in _todoListInfos)
                     {
-                        <li>
-                            <i class="fa-regular fa-circle"></i>
-                            <div class="@(list == selectedList?"todo-category-active":"")"
+                        <li class="@(list == selectedList?"todo-category-active":"") todo-list"
                          @onclick="@(()=>ListClickedAsync(list))">
+                            <i class="fa-regular fa-circle"></i>
+                            <div>
                                 @list.Name
                             </div>
                             <button @onclick="@(()=>DeleteListAsync(list))" class="float-end btn btn-sm btn-danger btn-delete border-dark border-2">
@@ -46,8 +46,8 @@
 
         </div>
         <div class="col-8 bg-white rounded p-0" style="min-height:500px;">
-            <div class="title d-flex align-items-center @(selectedList.IsCompleted?"bg-success":"bg-gray")">
-                <h4 class="m-2 fw-bold"><i class="fa-regular @(selectedList.IsCompleted?"fa-circle-check":"fa-circle")">&nbsp;</i>@selectedList.Name</h4>
+            <div class="title d-flex align-items-center @(selectedList.IsCompleted?"bg-success":"bg-light-blue")">
+                <h4 class="m-2 fw-bold"><i class=" @(selectedList.IsCompleted?"fa-regular fa-circle-check":"fa-solid fa-list-check")">&nbsp;</i>@selectedList.Name</h4>
             </div>
             <div class="p-3">
                 <ul>
@@ -67,10 +67,28 @@
                         }
                     }
                 </ul>
-                <div class="input-group mb-3 mt-3">
-                    <input type="text" class="form-control" placeholder="Create a Task" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
-                    <button class="input-group-text btn btn-dark" id="inputGroup-sizing-default">Add</button>
-                </div>
+                @if(selectedList.Id is not 0)
+                {
+                    <div class="input-group mb-3 mt-3">
+                        <input type="text" class="form-control" placeholder="Create a Task" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                        <button class="input-group-text btn btn-dark" id="inputGroup-sizing-default">Add a Task to @selectedList.Name</button>
+                    </div>
+
+                }
+                else
+                {
+                    @if(_todoListInfos is not null)
+                    {
+                        @if(_todoListInfos.Count() == 0)
+                        {
+                            <p>Please create a list first ...</p>
+                        }
+                        else
+                        {
+                            <p>Please select one of the lists ...</p>
+                        }
+                    }
+                }
             </div>
         </div>
     </div>
