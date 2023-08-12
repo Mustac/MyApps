@@ -17,9 +17,9 @@
                     @* Active class = todo-category-active *@
                     @foreach (var list in _todoListInfos)
                     {
-                        <li class="@(list == selectedList?"todo-category-active":"") todo-list"
+                        <li class="@(list.Id == selectedList.Id?"todo-category-active":"") todo-list"
                          @onclick="@(()=>ListClickedAsync(list))">
-                            <i class="fa-regular fa-circle"></i>
+                            <i class="@(list.IsCompleted?"fa-regular fa-circle-check":"fa-regular fa-circle")"></i>
                             <div>
                                 @list.Name
                             </div>
@@ -57,11 +57,11 @@
                         {
                             @if (item.IsCompleted)
                             {
-                                <li class="todo-item"><i class="fa-regular fa-circle-check text-success"></i>&nbsp;<span class="todo-done">@item.Name</span></li>
+                                <li @onclick="@(()=>UpdateItemAsync(item))" class="todo-item"><i class="fa-regular fa-circle-check text-success"></i>&nbsp;<span class="todo-done">@item.Name</span></li>
                             }
                             else
                             {
-                                <li class="todo-item"><i class="fa-regular fa-circle"></i>&nbsp;<span>@item.Name</span></li>
+                                <li @onclick="@(()=>UpdateItemAsync(item))" class="todo-item"><i class="fa-regular fa-circle"></i>&nbsp;<span>@item.Name</span></li>
                             }
 
                         }
@@ -69,10 +69,15 @@
                 </ul>
                 @if(selectedList.Id is not 0)
                 {
-                    <div class="input-group mb-3 mt-3">
-                        <input type="text" class="form-control" placeholder="Create a Task" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
-                        <button class="input-group-text btn btn-dark" id="inputGroup-sizing-default">Add a Task to @selectedList.Name</button>
-                    </div>
+                    <EditForm Model="_todoItemRegistration" OnValidSubmit="RegistrateItemAsync">
+                        <div class="input-group mb-3 mt-3">
+                            <DataAnnotationsValidator />
+                            <InputText type="text" class="form-control" @bind-Value="_todoItemRegistration.Name" placeholder="Create new Todo" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default"></InputText>
+                            <button class="input-group-text btn btn-dark" id="inputGroup-sizing-default">Add</button>
+                        </div>
+                        <div class="bg-white rounded shadow"><small class="text-danger "><ValidationMessage class="p-2 " For="@(()=>_todoItemRegistration.Name)"></ValidationMessage></small></div>
+
+                    </EditForm>
 
                 }
                 else
@@ -99,6 +104,7 @@
     IEnumerable<TodoListInfo> _todoListInfos = new List<TodoListInfo>();
     IEnumerable<TodoItemInfo> _todoItems = new List<TodoItemInfo>();
     TodoListInfo selectedList = new TodoListInfo();
+    TodoItemRegistration _todoItemRegistration = new TodoItemRegistration();
 
 
 
@@ -120,7 +126,9 @@
         if (_todoListInfos.Count() > 0)
             selectedList = _todoListInfos.LastOrDefault();
 
-        StateHasChanged();
+        _todoItems = new List<TodoItemInfo>();
+
+        
     }
 
 
@@ -166,8 +174,42 @@
             _todoListInfos = await GetAllListsAsync();
         }
 
+        selectedList = new TodoListInfo();
+        _todoItems = new List<TodoItemInfo>();
     }
 
+    async Task UpdateItemAsync(TodoItemInfo todoItemInfo)
+    {
+        todoItemInfo.IsCompleted = !todoItemInfo.IsCompleted;
+        await TodoService.UpdateItemAsync(todoItemInfo);
+        await UpdateListAsync();
+        _todoListInfos = await GetAllListsAsync();
+        await InvokeAsync(StateHasChanged);
+
+    }
+
+    async Task UpdateListAsync()
+    {
+        bool allCompleted = _todoItems.All(x => x.IsCompleted);
+
+        if(allCompleted && selectedList.IsCompleted == false)
+            selectedList.IsCompleted = true;
+        else if(!allCompleted && selectedList.IsCompleted == true)
+            selectedList.IsCompleted = false;
+
+        await TodoService.UpdateListAsync(selectedList);
+
+    }
+
+    async Task RegistrateItemAsync(){
+        _todoItemRegistration.CategoryId = selectedList.Id;
+        await TodoService.CreateItemAsync(_todoItemRegistration);
+        _todoItems = await GetItemByListId(selectedList.Id);
+        await UpdateListAsync();
+        _todoListInfos = await GetAllListsAsync();
+        _todoItemRegistration.Name = string.Empty;
+
+    }
 
 
 }

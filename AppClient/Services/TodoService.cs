@@ -25,5 +25,15 @@ namespace MyAppClient.Services
 
         public async Task<ServerResponse<object>> DeleteListAsync(int id) =>
             await _apiCallService.ApiDeleteAsync($"todo/list/delete/{id}", true);
+
+        public async Task<ServerResponse<object>> UpdateItemAsync(TodoItemInfo todoItemInfo) =>
+            await _apiCallService.ApiPutAsync(todoItemInfo, $"todo/item/update");
+
+        public async Task<ServerResponse<object>> UpdateListAsync(TodoListInfo todoListInfo) =>
+            await _apiCallService.ApiPutAsync(todoListInfo, $"todo/list/update");
+
+        public async Task<ServerResponse<object>> CreateItemAsync(TodoItemRegistration todoItemRegistration) =>
+            await _apiCallService.ApiPostAsync(todoItemRegistration, $"todo/item/create");
+    
     }
 }

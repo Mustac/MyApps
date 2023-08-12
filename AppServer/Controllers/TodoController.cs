@@ -87,6 +87,56 @@ namespace MyAppServer.Controllers
             }
         }
 
+        [HttpPut("item/update")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        public async Task<ActionResult> UpdateItemAsync(TodoItemInfo todoItemInfo)
+        {
+            try
+            {
+                var response = await _todoService.UpdateItemAsync(todoItemInfo, UserId);
+                return AutoResponse(response);
+            }
+            catch
+            {
+                return ServerError();
+            }
+        }
+
+        [HttpPut("list/update")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        public async Task<ActionResult> UpdateListAsync(TodoListInfo todoListInfo)
+        {
+            try
+            {
+                var response = await _todoService.UpdateListAsync(todoListInfo, UserId);
+                return AutoResponse(response);
+            }
+            catch
+            {
+                return ServerError();
+            }
+        }
+
+        [HttpPost("item/create")]
+        [ProducesResponseType((int)HttpStatusCode.Created)]
+        [ProducesResponseType((int)HttpStatusCode.Conflict)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        public async Task<ActionResult> CreateItemAsync(TodoItemRegistration todoItemRegistration)
+        {
+            try
+            {
+                var response = await _todoService.CreateItemAsync(todoItemRegistration, UserId);
+                return AutoResponse(response);
+            }
+            catch
+            {
+                return ServerError();
+            }
+        }
 
     }
 }

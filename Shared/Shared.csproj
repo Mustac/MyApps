@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataTransferModels\Todo\TodoItemInfo.cs" />
+    <Compile Include="DataTransferModels\Todo\TodoItemRegistration.cs" />
     <Compile Include="DataTransferModels\Todo\TodoListInfo.cs" />
     <Compile Include="DataTransferModels\Todo\TodoListRegistration.cs" />
     <Compile Include="DataTransferModels\User\UserEmail.cs" />
