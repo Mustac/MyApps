@@ -21,23 +21,6 @@ namespace MyAppServer.Controllers
             _todoService = todoService;
         }
 
-        [HttpPost("list/create")]
-        [ProducesResponseType((int)HttpStatusCode.Created)]
-        [ProducesResponseType((int)HttpStatusCode.Conflict)]
-        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        public async Task<ActionResult> CreateNewListAsync(TodoListRegistration todoList)
-        {
-            try
-            {
-                var response = await _todoService.CreateNewListAsync(todoList.Name, UserId);
-                return AutoResponse(response);
-            }
-            catch
-            {
-                return ServerError();
-            }
-        }
-
         [HttpGet("list/all")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
@@ -70,15 +53,15 @@ namespace MyAppServer.Controllers
             }
         }
 
-
-        [HttpDelete("list/delete/{listid}")]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [HttpPost("list/create")]
+        [ProducesResponseType((int)HttpStatusCode.Created)]
+        [ProducesResponseType((int)HttpStatusCode.Conflict)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        public async Task<ActionResult> DeleteListAsync(int listId)
+        public async Task<ActionResult> CreateNewListAsync(TodoListRegistration todoList)
         {
             try
             {
-                var response = await _todoService.DeleteListAsync(listId, UserId);
+                var response = await _todoService.CreateNewListAsync(todoList.Name, UserId);
                 return AutoResponse(response);
             }
             catch
@@ -86,6 +69,24 @@ namespace MyAppServer.Controllers
                 return ServerError();
             }
         }
+
+        [HttpPost("item/create")]
+        [ProducesResponseType((int)HttpStatusCode.Created)]
+        [ProducesResponseType((int)HttpStatusCode.Conflict)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        public async Task<ActionResult> CreateItemAsync(TodoItemRegistration todoItemRegistration)
+        {
+            try
+            {
+                var response = await _todoService.CreateItemAsync(todoItemRegistration, UserId);
+                return AutoResponse(response);
+            }
+            catch
+            {
+                return ServerError();
+            }
+        }
+
 
         [HttpPut("item/update")]
         [ProducesResponseType((int)HttpStatusCode.OK)]
@@ -121,15 +122,14 @@ namespace MyAppServer.Controllers
             }
         }
 
-        [HttpPost("item/create")]
-        [ProducesResponseType((int)HttpStatusCode.Created)]
-        [ProducesResponseType((int)HttpStatusCode.Conflict)]
+        [HttpDelete("list/delete/{listid}")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
-        public async Task<ActionResult> CreateItemAsync(TodoItemRegistration todoItemRegistration)
+        public async Task<ActionResult> DeleteListAsync(int listId)
         {
             try
             {
-                var response = await _todoService.CreateItemAsync(todoItemRegistration, UserId);
+                var response = await _todoService.DeleteListAsync(listId, UserId);
                 return AutoResponse(response);
             }
             catch
@@ -138,5 +138,20 @@ namespace MyAppServer.Controllers
             }
         }
 
+        [HttpDelete("item/delete/{itemid}")]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.InternalServerError)]
+        public async Task<ActionResult> DeleteItemAsync(int itemid)
+        {
+            try
+            {
+                var response = await _todoService.DeleteItemAsync(itemid, UserId);
+                return AutoResponse(response);
+            }
+            catch
+            {
+                return ServerError();
+            }
+        }
     }
 }

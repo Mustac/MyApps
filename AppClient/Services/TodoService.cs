@@ -34,6 +34,8 @@ namespace MyAppClient.Services
 
         public async Task<ServerResponse<object>> CreateItemAsync(TodoItemRegistration todoItemRegistration) =>
             await _apiCallService.ApiPostAsync(todoItemRegistration, $"todo/item/create");
-    
+
+        public async Task<ServerResponse<object>> DeleteItemAsync(int id) =>
+            await _apiCallService.ApiDeleteAsync($"todo/item/delete/{id}", true);
     }
 }

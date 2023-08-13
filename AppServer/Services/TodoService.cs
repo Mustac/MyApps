@@ -129,7 +129,7 @@ namespace MyAppServer.Services
             var validUser = await _db.TodoLists.FirstOrDefaultAsync(x=> x.UserId == userId && x.Id == todoItemRegistration.CategoryId);
 
             if (validUser is null)
-                return new ServerResponse<object>(HttpStatusCode.Conflict, "");
+                return new ServerResponse<object>(HttpStatusCode.Conflict, "Something went wrong");
 
             TodoItem todoItem = new TodoItem()
             {
@@ -143,6 +143,22 @@ namespace MyAppServer.Services
             return await _db.SaveChangesAsync() > 0 ?
                new ServerResponse<object>(HttpStatusCode.OK, $"New Item has been created ") :
                new ServerResponse<object>(HttpStatusCode.InternalServerError, "Server error, try again later");
+        }
+
+        public async Task<ServerResponse<object>> DeleteItemAsync(int itemid, int userId)
+        {
+            var item = await _db.TodoItems.FirstOrDefaultAsync(x => x.Id == itemid && x.TodoList.UserId == userId);
+
+            if(item is null)
+                return new ServerResponse<object>(HttpStatusCode.Conflict, "Something went wrong");
+
+            _db.Remove(item);
+
+            return await _db.SaveChangesAsync() > 0 ?
+             new ServerResponse<object>(HttpStatusCode.OK, $"{item.Name} has been removed") :
+             new ServerResponse<object>(HttpStatusCode.InternalServerError, "Server error, try again later");
+
+
         }
     }
 }

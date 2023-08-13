@@ -5,19 +5,18 @@
 
 .todo-item {
     display: block;
-    font-size: 20px;
-    padding: 15px;
+    font-size: 15px;
+    position:relative;
     border-bottom: 1px solid gray;
     transition: 0.25s all;
 }
 
 .todo-done{
-    text-decoration:line-through;
     color:gray;
 }
 
 .todo-item:hover {
-    font-size: 23px;
+    font-size: 16px;
 }
 
 .todo-category-active {
@@ -48,8 +47,19 @@
 
 .todo-list {
     
-    padding: 4px 10px;
     border-radius: 5px;
     background-color: #27374D;
     color: white;
 }
+
+.btn-item-delete{
+    
+    width:30px;
+    height:30px;
+    transition:0.25s all;
+}
+
+.btn-item-delete:hover{
+    transform:scale(1.1);
+}
+
