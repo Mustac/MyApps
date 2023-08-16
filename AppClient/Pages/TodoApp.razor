@@ -58,11 +58,11 @@
                         @foreach (var item in _todoItems)
                         {
                             <li class="todo-item @(item.IsCompleted?"todo-done":"")">
-                                <div @onclick="@(()=>UpdateItemAsync(item))" style="width:90%; height:100%; padding:10px;">
+                                <div @onclick="@(()=>UpdateItemAsync(item))" class="todo-clickable">
                                 <i class="@(item.IsCompleted?"fa-regular fa-circle-check text-success":"fa-regular fa-circle") position-relative"></i>
                                 &nbsp;<span>@item.Name</span>
                                 </div>
-                                <button @onclick="@(()=>DeleteItemAsync(item))" class="btn btn-danger btn-item-delete p-0">
+                                <button @onclick="@(()=>DeleteItemAsync(item))" class="btn btn-danger btn-item-delete d-block float-end p-0">
                                     <i class="fa-solid fa-trash p-0"></i>
                                 </button>
                             </li>
